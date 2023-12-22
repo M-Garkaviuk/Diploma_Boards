@@ -1,25 +1,27 @@
 {% extends 'base.html' %}
- {% block content %}
-     <div>main page</div>
-{#    {% for obj in object_list %}#}
-{#        <div>#}
-{#            <h2>{{ obj.product_name }}</h2>#}
-{#            <p>{{ obj.description }}</p>#}
-{#            <p>Price: {{ obj.price }}</p>#}
-{#            <p>Stock: {{ obj.stock }}</p>#}
-{##}
-{#            {% if request.user.is_authenticated and not request.user.is_staff %}#}
-{#                <form method="post" action="{% url 'product-purchase' %}">#}
-{#                    {% csrf_token %}#}
-{#                    <input type="hidden" name="user_products" value="{{ obj.pk }}">#}
-{#                    {{ purchase_form }}#}
-{#                    <input type="submit" value="Buy">#}
-{#                </form>#}
-{#            {% endif %}#}
-{##}
-{#            {% if request.user.is_staff %}#}
-{#                <a class="nav-item" href="{% url 'product-update' obj.pk %}">Edit product</a><br>#}
-{#            {% endif %}#}
-{#        </div>#}
-{#    {% endfor %}#}
+
+{% block content %}
+    <div>main page</div>
+
+    <div style="display: flex; gap: 20px;">  {# Flex container for columns #}
+
+        {% for status in BOARD_STATUSES %}
+
+            <div style="flex: 1;">
+                <h2>{{ status.1}}</h2>
+
+                {% for obj in object_list %}
+                    {% if obj.status == status.0 %}
+                        <div>
+                            <h3>{{ obj.title }}</h3>
+                            <p>{{ obj.content }}</p>
+                            {# Additional card details or actions can be added here #}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+        {% endfor %}
+
+    </div>
 {% endblock %}

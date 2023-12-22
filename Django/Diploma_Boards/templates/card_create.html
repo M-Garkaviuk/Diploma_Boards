@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>New_Card</title>
+</head>
+<h2>Create a card</h2>
+<form method="post" action="{% url "card-create"%}">
+   {% csrf_token %}
+   {{form.as_p}}
+   <input type="submit" value="Save card">
+</form>

@@ -12,7 +12,10 @@ class UserForm(UserCreationForm):
 class CardForm(ModelForm):
     class Meta:
         model = Card
-        fields = "__all__"
+        fields = ('assignee', 'title', 'content')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['assignee'].required = False
 
 
