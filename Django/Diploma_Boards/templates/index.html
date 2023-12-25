@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>main page</div>
+
+    <div style="display: flex; gap: 20px;">  {# Flex container for columns #}
+
+        {% for status in BOARD_STATUSES %}
+
+            <div style="flex: 1;">
+                <h2>{{ status.1}}</h2>
+
+                {% for obj in object_list %}
+                    {% if obj.status == status.0 %}
+                        <div>
+                            <h3>{{ obj.title }}</h3>
+                            <p>{{ obj.content }}</p>
+                            {# Additional card details or actions can be added here #}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+        {% endfor %}
+
+    </div>
+{% endblock %}
