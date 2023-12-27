@@ -18,7 +18,8 @@ class Card(models.Model):
         on_delete=models.CASCADE,
         related_name='assigned_cards',
         null=True,
-        blank=True
+        blank=True,
+        default=None
     )
     title = models.CharField(max_length=255)
     content = models.TextField(max_length=1000)

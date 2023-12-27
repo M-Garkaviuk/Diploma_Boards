@@ -10,6 +10,7 @@ class TokenExpiration(TokenAuthentication):
 
     def authenticate_credentials(self, key):
         try:
+            print("aaa")
             token = Token.objects.get(key=key)
         except Token.DoesNotExist:
             raise AuthenticationFailed("Invalid token")

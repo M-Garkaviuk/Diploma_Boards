@@ -2,7 +2,6 @@
 
 from django.urls import path, include
 from rest_framework import routers
-
 from myapp.API.resourses import CardViewSet, CustomAuthToken
 from myapp.views import (CardListView,
                          Register,

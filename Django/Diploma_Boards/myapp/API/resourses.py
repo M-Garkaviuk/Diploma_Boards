@@ -5,7 +5,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 from Diploma_Boards import settings
-from myapp.API.serializers import CardSerializer
+from myapp.API.authentication import TokenExpiration
+from myapp.API.serializers import CardViewSerializer
 from myapp.models import Card
 
 
@@ -29,10 +30,11 @@ class CustomAuthToken(ObtainAuthToken):
 
 class CardViewSet(viewsets.ModelViewSet):
     queryset = Card.objects.all()
-    serializer_class = CardSerializer
+    serializer_class = CardViewSerializer
+    authentication_classes = [TokenExpiration]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(user=self.request.user)
 
 
 class CardStatusSet(viewsets.ModelViewSet):
