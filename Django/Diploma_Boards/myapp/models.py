@@ -4,15 +4,14 @@ from Diploma_Boards.settings import BOARD_STATUSES
 
 
 class User(AbstractUser):
-    is_manager = False
-    is_staff = True
+    is_manager = models.BooleanField(default=False)
 
 
 class Card(models.Model):
     created_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='created_reports'
+        related_name='created_cards'
     )
     assignee = models.ForeignKey(
         User,
@@ -26,7 +25,7 @@ class Card(models.Model):
     status = models.CharField(
         max_length=20,
         choices=BOARD_STATUSES,
-        default='new'
+        default='new',
     )
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now=True)
@@ -34,9 +33,36 @@ class Card(models.Model):
     def __str__(self):
         return f'Card {self.pk}, title "{self.title}"'
 
-    def save(self, *args, **kwargs):
-        if not self.assignee_id:
-            self.assignee = None
-            raise "You can assign card only to yourself"
+    def get_next_status(self):
+        current_index = [status[0] for status in BOARD_STATUSES].index(self.status)
+        if current_index + 1 < len(BOARD_STATUSES):
+            return BOARD_STATUSES[current_index + 1][0]
+        else:
+            return None
 
-        super().save(*args, **kwargs)
+    def get_previous_status(self):
+        current_index = [status[0] for status in BOARD_STATUSES].index(self.status)
+        if current_index - 1 >= 0:
+            return BOARD_STATUSES[current_index - 1][0]
+        else:
+            return None
+
+    def set_next_status(self):
+        self.status = self.get_next_status()
+        self.save()
+
+    def set_previous_status(self):
+        self.status = self.get_previous_status()
+        self.save()
+
+    def user_can_move_to_next_status(self):
+        return self.status in ('new', 'in_progress', 'in_QA')
+
+    def user_can_move_to_previous_status(self):
+        return self.status in ('in_progress', 'in_QA', 'ready')
+
+    def manager_can_move_to_next_status(self):
+        return self.status == 'ready'
+
+    def manager_can_move_to_previous_status(self):
+        return self.status == 'done'

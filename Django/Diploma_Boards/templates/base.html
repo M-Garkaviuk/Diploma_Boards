@@ -2,32 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Base</title>
+    <title>Dashboard</title>
 </head>
 <body>
 <div>
-<a class = "nav-item" href ="{% url "index" %}">Homepage</a><br>
+    <a class="nav-item" href="{% url 'index' %}">Homepage</a><br>
     {% if not request.user.is_authenticated %}
         <div>
             We are sorry, you are not logged in. Please use the <a href="{% url 'login' %}">Login page</a> first!
         </div>
     {% else %}
         <p>Hello, {{ request.user.username }}!</p>
-        <div>
-            <a href="{% url 'logout' %}">Logout</a>
-        </div>
+        <form id="logout-form" method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Log out</button>
+        </form>
     {% endif %}
-{% if messages %}
-        <url class="messages">
+    {% if messages %}
+        <ul class="messages">
             {% for message in messages %}
                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
-        </url>
+        </ul>
     {% endif %}
-{% if request.user.is_staff and not request.user.is_manager%}
-    <a class = "nav-item" href ="{% url "card-create" %}">Create card</a><br>
-{#    <a class = "nav-item" href ="{% url "assigned-to-me" %}">Assigned to me</a><br>#}
-{% endif %}
+    {% if request.user.is_authenticated and not request.user.is_manager %}
+        <a class="nav-item" href="{% url 'card-create' %}">Create card</a><br>
+    {% endif %}
     {% block content %}
     {% endblock %}
 </div>

@@ -1,27 +1,60 @@
 {% extends 'base.html' %}
-
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
 {% block content %}
-    <div>main page</div>
-
-    <div style="display: flex; gap: 20px;">  {# Flex container for columns #}
+    {% if request.user.is_authenticated %}
+        <div style="display: flex; gap: 20px;">
 
         {% for status in BOARD_STATUSES %}
 
             <div style="flex: 1;">
-                <h2>{{ status.1}}</h2>
+                <h2>{{ status.1 }}</h2>
 
                 {% for obj in object_list %}
                     {% if obj.status == status.0 %}
-                        <div>
-                            <h3>{{ obj.title }}</h3>
-                            <p>{{ obj.content }}</p>
-                            {# Additional card details or actions can be added here #}
-                        </div>
+
+                    <h3>{{ obj.title }}</h3>
+                    <p>{{ obj.content }}</p>
+                    <p>Creator: {{ obj.created_by }}</p>
+                    <p>Assignee: {{ obj.assignee }}</p>
+                    {% if request.user == obj.created_by or request.user.is_manager == True %}
+                        <a class="nav-item" href="{% url 'card-update' obj.pk %}">Edit</a><br>
+                    {% endif %}
+                    {% if request.user == obj.assignee and obj.user_can_move_to_previous_status %}
+                        <form method="post" action="{% url 'status-update' obj.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" name="action" value="previous">Previous</button>
+                        </form>
+                    {% endif %}
+                        {% if request.user == obj.assignee and obj.user_can_move_to_next_status %}
+                            <form method="post" action="{% url 'status-update' obj.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="next">Next</button>
+                            </form>
+                        {% endif %}
+                        {% if request.user.is_manager and obj.manager_can_move_to_previous_status %}
+                            <form method="post" action="{% url 'status-update' obj.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="previous">Previous</button>
+                            </form>
+                        {% endif %}
+                        {% if request.user.is_manager and obj.manager_can_move_to_next_status %}
+                            <form method="post" action="{% url 'status-update' obj.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="next">Next</button>
+                            </form>
+                        {% endif %}
+                        {% if request.user.is_manager == True %}
+                            <form method="post" action="{% url 'card-delete' obj.pk %}">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </div>
-
         {% endfor %}
-
-    </div>
+        </div>
+    {% endif %}
 {% endblock %}
